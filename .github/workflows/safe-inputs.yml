@@ -1,0 +1,16 @@
+# .github/workflows/safe-inputs.yml
+name: Safe Shell Inputs Checker
+on: [pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan workflows
+        run: |
+          grep -r '\${{.*inputs\..*}}' .github/workflows/ | while read line; do
+            if ! echo "$line" | grep -q '"'; then
+              echo "⚠️ UNSAFE: $line"
+            fi
+          done
